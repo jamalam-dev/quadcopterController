@@ -56,25 +56,31 @@ int main() {
 	// loop variables
 	imuData imu;
 	control_packet pkt;
+	motorData motors;
+
+	double pid_out_pitch;
+	double pid_out_roll;
+	double pid_out_yaw;
 
 	double error_pitch = 0.0;
 	double error_roll = 0.0;
 	double error_yaw = 0.0;
+
 	double error_pitch_old = 0.0;
 	double error_roll_old = 0.0;
 	double error_yaw_old = 0.0;
 
 	high_resolution_clock::time_point t1;
 	high_resolution_clock::time_point t2;
-	duration<double> dt;
+	duration<double> dt; // this is the duration we use for the controller's math operations
 
 	high_resolution_clock::time_point t1_network;
 	high_resolution_clock::time_point t2_network;
-	duration<double> dt_network;
+	duration<double> dt_network; // this is the time spent receiving data from the network
 
 	high_resolution_clock::time_point t1_imu;
 	high_resolution_clock::time_point t2_imu;
-	duration<double> dt_imu;
+	duration<double> dt_imu; // this is the time spent receiving data from the IMU
 
 	t1 = high_resolution_clock::now(); // start of loop!
 
@@ -110,13 +116,31 @@ int main() {
 		}
 
 
+		// reset old errors
+		error_pitch_old = error_pitch;
+		error_roll_old = error_roll;
+		error_yaw_old = error_yaw;
+
 		// compute error
-		
+		error_pitch = computeError(pkt.pitch, imu.wy); // we might switch around axes as we decide the orientation (also might make one negative based on how the math works out).
+		error_roll = computeError(pkt.roll, imu.wx);
+		error_yaw = computeError(pkt.yaw, imu.wz);
 
 		// compute controller output
+		t2 = high_resolution_clock::now();
+		dt = duration_cast<duration<double>>(t2 - t1);
 		
+		pid_out_pitch	= pitch_pid.computeOutput(error_pitch, error_pitch_old, dt.count());
+		pid_out_roll	= roll_pid.computeOutput(error_roll, error_roll_old, dt.count());
+		pid_out_yaw		= yaw_pid.computeOutput(error_yaw, error_yaw_old, dt.count());
 
 		//drive motors
+		processPidOutputToMotorSpeeds(qc, motors, pid_out_pitch, pid_out_roll, pid_out_yaw);
+		sendMotorCommands();
+
+		// reset the loop
+		t1 = high_resolution_clock::now();
+
 
 	}
 

@@ -8,6 +8,7 @@
 
 using std::string;
 
+// struct to store
 typedef struct quadcopter {
 
 	double armLength; // meters
@@ -25,12 +26,12 @@ typedef struct quadcopter {
 
 typedef struct imuData {
 
-	double ax;
+	double ax; // m/s^2
 	double ay;
 	double az;
-	double wx;
+	double wx; // rad/s
 	double wy;
-	double wz;
+	double wz; // These are engineering units! 
 
 } imuData;
 
@@ -43,11 +44,15 @@ typedef struct motorData {
 
 } motorData;
 
-void readQcSetupFile(quadcopter &qc, string filename);
-void readPidSetupFile(pidController &pid, string filename);
+void readQcSetupFile(quadcopter &qc, string filename); // reads a CSV file with quadcopter parameters (drag gains, and propeller gains). Fills a quadcopter struct.
+void readPidSetupFile(pidController &pid, string filename); // reads a CSV file with PID gains. Sets PID Kp, Ki, and Kd values.
 
-void sensorSetup();
-void getSensorData(imuData &imu);
+void sensorSetup(); // Set up I2C or other serial connection to IMU
+void getSensorData(imuData &imu); // pull a "packet" of data from the serial connection
 
-void processPidOutputToMotorSpeeds(motorData &motor, double pitch, double roll, double yaw);
+void motorSetup(); // sets up PWM channels and whatnot
+void processPidOutputToMotorSpeeds(quadcopter qc, motorData &motor, double pitch, double roll, double yaw); // processes engineering units to PWM values
+void sendMotorCommands(); // send the motors speed along the PWM channels
+
+double computeError(double des, double cur); // computes error between the desired value (des) and the current value (cur) (i.e., des - cur)
 

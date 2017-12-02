@@ -2,6 +2,8 @@
 
 #include <stdint.h>
 
+#define NETWORK_PORT 7501
+
 typedef struct control_packet {
 
 	double pitch; // rad/s

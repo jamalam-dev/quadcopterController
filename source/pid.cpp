@@ -5,6 +5,7 @@ pidController::pidController() {
 	Kp = 0.0;
 	Ki = 0.0;
 	Kd = 0.0;
+	bias = 0.0;
 }
 
 pidController::pidController(double kp, double ki, double kd) {
@@ -12,6 +13,7 @@ pidController::pidController(double kp, double ki, double kd) {
 	Kp = kp;
 	Ki = ki;
 	Kd = kd;
+	bias = 0.0;
 }
 
 double pidController::getKp() {
@@ -24,6 +26,10 @@ double pidController::getKi() {
 
 double pidController::getKd() {
 	return Kd;
+}
+
+double pidController::getBias() {
+	return bias;
 }
 
 
@@ -39,6 +45,9 @@ void pidController::setKd(double kd) {
 	Kd = kd;
 }
 
+void pidController::setBias(double biasIn) {
+	bias = biasIn;
+}
 
 double pidController::computeOutput(double error, double error_old, double iteration_time) {
 
@@ -52,11 +61,11 @@ double pidController::computeOutput(double error, double error_old, double itera
 		integral += error * iteration_time;
 		derivative = (error - error_old) / iteration_time;
 
-		output = Kp*error + Ki*integral + Kd*derivative;
+		output = Kp*error + Ki*integral + Kd*derivative + bias;
 
 	} else { // only proportional logic
 
-		output = Kp*error;
+		output = Kp*error + bias;
 
 	}
 	

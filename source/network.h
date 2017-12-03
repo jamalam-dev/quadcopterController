@@ -2,6 +2,14 @@
 
 #include <stdint.h>
 
+#include <sys/types.h>
+#include <errno.h>
+#include <string.h>
+#include <unistd.h>
+#include <netdb.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+
 #define NETWORK_PORT 7501
 
 typedef struct control_packet {
@@ -26,6 +34,11 @@ public:
 	void receiveData(control_packet &pkt);
 
 private:
-	control_packet parsePacket(uint8_t *data);
+
+	SOCKET sock = INVALID_SOCKET;
+	struct addrinfo *result = NULL;
+	struct addrinfo hints;
+
+	control_packet parsePacket(control_packet &pkt);
 
 };

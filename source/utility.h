@@ -6,6 +6,12 @@
 #include <string>
 #include <iostream>
 
+#include <wiringPi/wiringPi.h>
+#include <wiringPi/wiringPiSPI.h>
+
+#define SPI_CHANNEL 0
+#define SPI_SPEED 14400
+
 using std::string;
 
 // struct to store
@@ -47,7 +53,7 @@ typedef struct motorData {
 void readQcSetupFile(quadcopter &qc, string filename); // reads a CSV file with quadcopter parameters (drag gains, and propeller gains). Fills a quadcopter struct.
 void readPidSetupFile(pidController &pid, string filename); // reads a CSV file with PID gains. Sets PID Kp, Ki, and Kd values.
 
-void sensorSetup(); // Set up I2C or other serial connection to IMU
+int sensorSetup(); // Set up I2C or other serial connection to IMU
 void getSensorData(imuData &imu); // pull a "packet" of data from the serial connection
 
 void motorSetup(); // sets up PWM channels and whatnot

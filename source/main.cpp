@@ -20,21 +20,6 @@ int main() {
 
 	using namespace std::chrono;
 
-	//high_resolution_clock::time_point t1 = high_resolution_clock::now();
-
-	//for (int i = 0; i < 1000; i++) {
-	//	printf("*");
-	//}
-
-	//printf("\n");
-
-	//high_resolution_clock::time_point t2 = high_resolution_clock::now();
-
-	//duration<double> timespan = duration_cast<duration<double>>(t2 - t1);
-
-	//printf("dt = %1.10e\n", timespan.count());
-
-
 	// Setup code
 	quadcopter qc;
 	readQcSetupFile(qc, QC_CONFIG_FILE);
@@ -51,7 +36,14 @@ int main() {
 	Network network;
 	network.createSocket(); // network will provide our control inputs
 
-	sensorSetup(); // sets up the IMU
+	int ret;
+	
+	ret = sensorSetup(); // sets up the IMU
+
+	if (ret < 0) {
+		printf("ERROR: SPI library and sensor could not be initialized\n");
+		return ret;
+	}
 
 	// loop variables
 	imuData imu;

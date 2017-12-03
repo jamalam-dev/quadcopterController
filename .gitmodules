@@ -1,0 +1,6 @@
+[submodule "wiringPi"]
+	path = wiringPi
+	url = git://git.drogon.net/wiringPi
+[submodule "SparkFun_LSM9DS1_Arduino_Library"]
+	path = SparkFun_LSM9DS1_Arduino_Library
+	url = https://github.com/sparkfun/SparkFun_LSM9DS1_Arduino_Library

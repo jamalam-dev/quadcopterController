@@ -31,5 +31,4 @@ private:
 	double integral;
 	double derivative;
 
-
 };
